@@ -2,7 +2,6 @@
 from bottle import Bottle, server_names
 import argparse
 import configparser
-import config
 import sys
 import os
 
@@ -15,12 +14,23 @@ def main():
     mainapp = Bottle()
     print("Building ships...")
     for x in scriptconf:
-        print("Building ship " + x + "...")
-        modified_locals = locals()[:]
-        scriptpath = os.path.join(args.scripts, scriptconf[x]["wsgi-script"])
+        if x == "DEFAULT":
+            continue
+        cursc = scriptconf[x]
+        print("Building ship " + x + " at path " + cursc["path"] + "...")
+        modified_locals = {}
+        scriptpath = os.path.join(args.scripts, x)
         exec(open(scriptpath, mode="r", encoding="UTF-8").read(), globals(),
              modified_locals)
-        mainapp.mount(x, modified_locals[scriptconf[x][app-var])
+        try:
+            if scriptconf[x]["path"] != "/":
+                mainapp.mount(cursc["path"], modified_locals[cursc["app-var"]])
+            else:
+                mainapp.merge(modified_locals[cursc["app-var"]])
+        except ValueError as e:
+            print("Whoopsie! An error occured.")
+            print(e)
+            exit(1)
     print("Preparing to finish up our bottle...")
     servername = mainconf["bottle-config"]["server"]
     if not servername in server_names:
@@ -44,9 +54,9 @@ def get_arguments():
     server and port.
     """)
     argparser.add_argument("--main-config", help="primary configuration",
-                           default="/etc/ship-in-a-bottle.conf", type=file)
+                           default="/etc/ship-in-a-bottle.conf", type=open)
     argparser.add_argument("--script-config", help="configuration file",
-                           default="/srv/bottles/ships.conf", type=file)
+                           default="/srv/bottles/ships.conf", type=open)
     argparser.add_argument("--scripts", help="folder containing scripts",
                            default="/srv/bottles/")
     return argparser.parse_args()
@@ -55,3 +65,6 @@ def parse_config(filehandle):
     config = configparser.ConfigParser()
     config.read_file(filehandle)
     return config
+
+if __name__ == "__main__":
+    main()
