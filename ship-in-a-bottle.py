@@ -51,7 +51,7 @@ def main():
                 for y in scriptapp.routes:
                     if (y.rule, y.method) in paths:
                         print(" ERROR: " + y.method + " " +  y.rule + " ALREADY EXISTS.")
-                        print(" SKIPPING SHIP")
+                        print(" ABANDONING SHIP")
                         willimport = False
                         break
                 if willimport:
