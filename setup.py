@@ -11,7 +11,9 @@ setup(name='ship-in-a-bottle',
         scripts=['ship-in-a-bottle.py'],
         requires=["bottle"],
         data_files=[('/etc', ['cfgs/ship-in-a-bottle.conf']),
-                    ('/srv/bottles', ['cfgs/ships.conf', 'examples/hello.py'])],
+                    ('/srv/bottles', ['cfgs/ships.conf', 'examples/hello.py'])
+                    ('/etc/systemd/system/', ['init/ship-in-a-bottle.service'])
+                    ],
         classifiers=["Development Status :: 4 - Beta",
                      "Environment :: Web Environment",
                      "Intended Audience :: System Administrators",

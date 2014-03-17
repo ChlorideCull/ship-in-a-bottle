@@ -1,0 +1,10 @@
+[Unit]
+Description=Run multiple WSGI scripts and/or bottles at the same port.
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/ship-in-a-bottle.py
+
+[Install]
+WantedBy=multi-user.target
