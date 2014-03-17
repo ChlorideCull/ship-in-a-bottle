@@ -15,6 +15,6 @@ setup(name='ship-in-a-bottle',
                      "Environment :: Web Environment",
                      "Intended Audience :: System Administrators",
                      "Framework :: Bottle",
-                     "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
+                     "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
                      "Programming Language :: Python :: 3"]
      )
