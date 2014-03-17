@@ -13,24 +13,41 @@ def main():
     print("Bringing out the largest bottle we could find...")
     mainapp = Bottle()
     print("Building ships...")
+    paths = []
     for x in scriptconf:
         if x == "DEFAULT":
             continue
+
         cursc = scriptconf[x]
-        print("Building ship " + x + " at path " + cursc["path"] + "...")
+        print("Building ship " + x + "...")
         modified_locals = {}
         scriptpath = os.path.join(args.scripts, x)
         exec(open(scriptpath, mode="r", encoding="UTF-8").read(), globals(),
              modified_locals)
+        scriptapp = modified_locals[cursc["app-var"]]
+
         try:
-            if scriptconf[x]["path"] != "/":
-                mainapp.mount(cursc["path"], modified_locals[cursc["app-var"]])
+            if (not cursc["path"] in paths) and (cursc["path"] != "/"):
+                mainapp.mount(cursc["path"], scriptapp)
+                print(" Ship " + x + " added to path " + cursc["path"] + ".")
             else:
-                mainapp.merge(modified_locals[cursc["app-var"]])
+                willimport = True
+                for y in scriptapp.routes:
+                    if (y.rule, y.method) in paths:
+                        print(" ERROR: " + y.method + " " +  y.rule + " ALREADY EXISTS.")
+                        print(" SKIPPING SHIP")
+                        willimport = False
+                        break
+                if willimport:
+                    for y in scriptapp.routes:
+                        paths.append((y.rule, y.method))
+                    mainapp.merge(scriptapp)
+                    print(" Ship " + x + " merged with path " + cursc["path"] + ".")
         except ValueError as e:
             print("Whoopsie! An error occured.")
             print(e)
             exit(1)
+
     print("Preparing to finish up our bottle...")
     servername = mainconf["bottle-config"]["server"]
     if not servername in server_names:
