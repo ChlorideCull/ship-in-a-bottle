@@ -17,12 +17,15 @@
 
 from bottle import Bottle, server_names
 import argparse
+import syslog
 import configparser
 import sys
 import os
 
 def main():
     args = get_arguments()
+    if args.use_syslog:
+        print = lambda x: syslog.syslog(str(x))
     print("Preparing equipment...")
     mainconf = parse_config(args.main_config)
     scriptconf = parse_config(args.script_config)
@@ -92,6 +95,9 @@ def get_arguments():
                            default="/srv/bottles/ships.conf", type=open)
     argparser.add_argument("--scripts", help="folder containing scripts",
                            default="/srv/bottles/")
+    argparser.add_argument("--use-syslog",
+                           help="redirect print statements to syslog",
+                           action="store_true")
     return argparser.parse_args()
 
 def parse_config(filehandle):

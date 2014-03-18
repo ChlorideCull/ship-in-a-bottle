@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/ship-in-a-bottle.py
+ExecStart=/usr/bin/ship-in-a-bottle.py --use-syslog
 
 [Install]
 WantedBy=multi-user.target
